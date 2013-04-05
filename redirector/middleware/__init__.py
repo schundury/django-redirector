@@ -49,11 +49,16 @@ class RedirectMiddleware(object):
                      ''
 
             if np.netloc:
-                url = '{0}://{1}{2}{3}'.format(np.scheme, np.netloc, np.path, new_qs)
+                #Adding another check to strip any trailing slashes and remove them
+                if '/' in np.netloc:
+                    new_netloc = np.netloc.replace('/', '') 
+                else:
+                    new_netloc = np.netloc
+                url = '{0}://{1}{2}{3}'.format(np.scheme, new_netloc, np.path, new_qs)
             else:
                 url = '{0}{1}'.format(np.path, new_qs)
-
+            
             return HttpResponsePermanentRedirect(url)
-
+            
         # No redirect was found. Return the response.
         return response
